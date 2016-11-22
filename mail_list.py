@@ -36,6 +36,7 @@ for subdirs in os.listdir(maildir):
 			for line in email:
 				#print "line"
 				if to.match(line):
+					#removing the entries with multiple email addressess
 					letters = collections.Counter(reciever)
 					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
 						multiple = 0
@@ -44,7 +45,7 @@ for subdirs in os.listdir(maildir):
 					reciever = re.sub("<(.+)","",search_list)
 					reciever = reciever.strip(' \t\n\r')
 					
-					#removing the entries with multiple email addresses
+					
 					
 					#mapping alternative names to the generalized name.	
 					reciever = re.sub(r'^"|"$', '', reciever)
@@ -52,10 +53,11 @@ for subdirs in os.listdir(maildir):
 						if  key in reciever or reciever in names_mapper[key]:
 							reciever = key
 							break
-					mail_list.write(reciever+"|")								
+													
 					#print "to"
 					
 				if x_from.match(line):
+					#removing the entries with multiple email addresses
 					letters = collections.Counter(sender)
 					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
 						multiple = 0				
@@ -63,8 +65,7 @@ for subdirs in os.listdir(maildir):
 					search_list = re.sub("X-From:","",line)
 					sender = re.sub("<(.+)","",search_list)
 					sender = sender.strip(' \t\n\r')
-					#sender = re.sub(r'^"|"$', '', sender)
-					#removing the entries with multiple email addresses
+					
 					
 					#mapping alternative names to the generalized name.	
 					sender = re.sub(r'^"|"$', '', sender)
@@ -72,14 +73,14 @@ for subdirs in os.listdir(maildir):
 						if key in sender or sender in names_mapper[key]:
 							sender = key
 							break
-					mail_list.write(sender+"|")		
+							
 				if date.match(line):
 					search_list = re.sub("Date:","",line)
 					email_date = search_list.strip('\t\n\r')		
 					email_date = re.sub(r'^"|"$', '', email_date)
-					mail_list.write(email_date)
+					
 					#print "from
 			
-			#if multiple == 1:		
-			mail_list.write("\n")
+			if multiple == 1:		
+				mail_list.write(reciever+"|"+sender+"|"+email_date+"\n")
 			
