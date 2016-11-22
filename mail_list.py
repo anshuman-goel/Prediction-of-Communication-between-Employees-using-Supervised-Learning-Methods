@@ -2,21 +2,28 @@ import os
 import re
 from difflib import SequenceMatcher as sm
 import numpy as np
+import collections
 maildir = '/home/rohit/maildir'
 alter_names = {}
 alter = []
+#reading the alternative names into a hash
+alter_names = open("alter_names.csv",'r')
+names_mapper = {}
+for line in alter_names.readlines():
+	split = line.split(':')
+	names_mapper[split[0]] = split[1]
 to = re.compile("X-To:(.*)")
 x_from = re.compile("X-From:(.*)")
+date = re.compile("Date:(.*)")
 for subdirs in os.listdir(maildir):
+	multiple = 1
 	alter = []
 	sender = ""
 	reciever = ""
-	mail_list = open("preprocessed/"+subdirs+".csv",'w')
+	mail_list = open("preprocessed/"+subdirs+".csv",'w') # the mail list files for each employee
 	#getting mail history from inbox
 	inbox = "/home/rohit/maildir/"+subdirs+"/inbox/"
-	#print "subdirs"
 	if os.path.isdir(inbox) != True:
-		#print "fuck scene"
 		continue
 	else:
 		for files in os.listdir(inbox):
@@ -29,55 +36,50 @@ for subdirs in os.listdir(maildir):
 			for line in email:
 				#print "line"
 				if to.match(line):
+					letters = collections.Counter(reciever)
+					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
+						multiple = 0
+						break
 					search_list = re.sub("X-To:","",line)
 					reciever = re.sub("<(.+)","",search_list)
+					reciever = reciever.strip(' \t\n\r')
+					
+					#removing the entries with multiple email addresses
+					
+					#mapping alternative names to the generalized name.	
+					reciever = re.sub(r'^"|"$', '', reciever)
+					for key in names_mapper:
+						if  key in reciever or reciever in names_mapper[key]:
+							reciever = key
+							break
+					mail_list.write(reciever+"|")								
 					#print "to"
 					
 				if x_from.match(line):
+					letters = collections.Counter(sender)
+					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
+						multiple = 0				
+						break
 					search_list = re.sub("X-From:","",line)
-					sender = re.sub("<(.+)","",search_list)		
-					#print "from"
-			sender = sender.strip(' \t\n\r')
-			reciever = reciever.strip(' \t\n\r')	
-			mail_list.write(reciever+"|"+sender+"\n")
-			if(sm(None,subdirs,reciever) >= 0.0):
-				alter.append(reciever)
-	#getting info from sent folder
-	sender = ""
-	reciever = ""
-	#mail_list.write("********************GOING TO SENT FOLDER***********************************\n")
-	sent = "/home/rohit/maildir/"+subdirs+"/sent/"
-	if os.path.isdir(sent) != True:
-		continue
-	else:
-		for files in os.listdir(sent):
-			print files
-			try:
-				email_file = open(sent+"/"+files,'r')
-			except IOError:
-				continue
-			email = email_file.readlines()
-			#print "files"
-			for line in email:
-				#print "line"
-				if to.match(line):
-					search_list = re.sub("X-To:","",line)
-					reciever = re.sub("<(.+)","",search_list)
-					#print "to"
+					sender = re.sub("<(.+)","",search_list)
+					sender = sender.strip(' \t\n\r')
+					#sender = re.sub(r'^"|"$', '', sender)
+					#removing the entries with multiple email addresses
 					
-				if x_from.match(line):
-					search_list = re.sub("X-From:","",line)
-					sender = re.sub("<(.+)","",search_list)		
-					#print "from"
-			sender = sender.strip(' \t\n\r')
-			reciever = reciever.strip(' \t\n\r')	
-			mail_list.write(sender+"|"+reciever+"\n")
-			#trying to fill the alter_names
-			if(sm(None,subdirs,sender) >=  0.0):
-				alter.append(sender)
-	if len(alter) != 0:
-		alter = list(set(alter))
-		alter_names[subdirs] = alter
-np.save('alter_names_dict.npy', alter_names)
- 
-				
+					#mapping alternative names to the generalized name.	
+					sender = re.sub(r'^"|"$', '', sender)
+					for key in names_mapper:
+						if key in sender or sender in names_mapper[key]:
+							sender = key
+							break
+					mail_list.write(sender+"|")		
+				if date.match(line):
+					search_list = re.sub("Date:","",line)
+					email_date = search_list.strip('\t\n\r')		
+					email_date = re.sub(r'^"|"$', '', email_date)
+					mail_list.write(email_date)
+					#print "from
+			
+			#if multiple == 1:		
+			mail_list.write("\n")
+			
