@@ -16,7 +16,7 @@ to = re.compile("X-To:(.*)")
 x_from = re.compile("X-From:(.*)")
 date = re.compile("Date:(.*)")
 for subdirs in os.listdir(maildir):
-	multiple = 1
+	
 	alter = []
 	sender = ""
 	reciever = ""
@@ -31,21 +31,22 @@ for subdirs in os.listdir(maildir):
 				email_file = open(inbox+"/"+files,'r')
 			except IOError:
 				continue
+			multiple = 1	
 			email = email_file.readlines()
 			#print "files"
 			for line in email:
 				#print "line"
+				
 				if to.match(line):
-					#removing the entries with multiple email addressess
-					letters = collections.Counter(reciever)
-					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
-						multiple = 0
-						break
 					search_list = re.sub("X-To:","",line)
 					reciever = re.sub("<(.+)","",search_list)
 					reciever = reciever.strip(' \t\n\r')
-					
-					
+					#removing the entries with multiple email addressess
+					letters = collections.Counter(reciever)
+					if((letters["'"] > 2) or (letters[","] > 1) or (letters["@"] > 1)):
+						print reciever
+						multiple = 0
+						break
 					
 					#mapping alternative names to the generalized name.	
 					reciever = re.sub(r'^"|"$', '', reciever)
@@ -58,15 +59,15 @@ for subdirs in os.listdir(maildir):
 					
 				if x_from.match(line):
 					#removing the entries with multiple email addresses
-					letters = collections.Counter(sender)
-					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
-						multiple = 0				
-						break
 					search_list = re.sub("X-From:","",line)
 					sender = re.sub("<(.+)","",search_list)
 					sender = sender.strip(' \t\n\r')
-					
-					
+					letters = collections.Counter(sender)
+					if(letters["'"] > 2 or letters[","] > 1 or letters["@"] > 1):
+						print sender
+						multiple = 0				
+						break
+			
 					#mapping alternative names to the generalized name.	
 					sender = re.sub(r'^"|"$', '', sender)
 					for key in names_mapper:
