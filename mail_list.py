@@ -15,12 +15,13 @@ for line in alter_names.readlines():
 to = re.compile("X-To:(.*)")
 x_from = re.compile("X-From:(.*)")
 date = re.compile("Date:(.*)")
+mail_list = open("email_processed"+".csv",'w')
 for subdirs in os.listdir(maildir):
 	
 	alter = []
 	sender = ""
 	reciever = ""
-	mail_list = open("preprocessed/"+subdirs+".csv",'w') # the mail list files for each employee
+	#mail_list = open("preprocessed/"+subdirs+".csv",'w') # the mail list files for each employee
 	#getting mail history from inbox
 	inbox = "/home/rohit/maildir/"+subdirs+"/inbox/"
 	if os.path.isdir(inbox) != True:
