@@ -18,8 +18,8 @@ The Python code was used to perform final processing of the dataset. It removes 
 
 3. alter_names.csv
 
-The file that contains the hashmap-like structure. The data is present in the form, <employee name>:<alternative name_1|alternative_name_2|...|alternative_name_n>
+The file that contains the hashmap-like structure. The data is present in the form, 'employee name':'alternative name_1|alternative_name_2|...|alternative_name_n'
 
 4. email_processed.csv
 
-It is the final processed dataset. The data is present in the form, <to_address>|<from_address>|Date
+It is the final processed dataset. The data is present in the form, 'to_address'|'from_address'|Date
