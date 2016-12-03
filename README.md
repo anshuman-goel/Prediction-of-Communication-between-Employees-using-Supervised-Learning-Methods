@@ -23,3 +23,12 @@ The file that contains the hashmap-like structure. The data is present in the fo
 (4) email_processed.csv
 
 It is the final processed dataset. The data is present in the form, 'to_address'|'from_address'|Date
+
+(5) SocialNetwork.R
+
+Builds the Bayesian baseline as well as the social network analysis. Can be run as a whole to do both or separated at the comments requires email_processed.csv
+
+(6) BaggedSNA.R
+
+Builds the bagged iteration of the social network analysis. Can be run in its entirity to produce accuracy as the end result.
+Requires email_processed.csv
