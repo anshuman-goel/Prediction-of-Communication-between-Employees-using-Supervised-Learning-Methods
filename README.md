@@ -8,18 +8,18 @@ The main objecive of this project was to analyze the Enron Email Dataset and to 
 
 File Descriptions:-
 
-1. names.py
+(1) names.py
 
 The Python script was used to generate a hashmap, to map between the employee name, and his/her various alternative names and email addresses used in the dataset. It generates the alter_names.csv file.	
 
-2. mail_list.py
+(2) mail_list.py
 
 The Python code was used to perform final processing of the dataset. It removes all records that contained multiple addresses, or names, from both the sender side and recipient side. It also generalizes the names of the employees inorder to make the prediction algorithms efficient. It reads the alter_names.csv file to implement the hashmap and generates the email_processed.csv file.
 
-3. alter_names.csv
+(3) alter_names.csv
 
 The file that contains the hashmap-like structure. The data is present in the form, 'employee name':'alternative name_1|alternative_name_2|...|alternative_name_n'
 
-4. email_processed.csv
+(4) email_processed.csv
 
 It is the final processed dataset. The data is present in the form, 'to_address'|'from_address'|Date
